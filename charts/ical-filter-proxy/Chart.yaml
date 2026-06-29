@@ -1,0 +1,22 @@
+apiVersion: v2
+name: ical-filter-proxy
+description: A filtering proxy for remote iCalendar feeds
+version: 0.1.0
+appVersion: "0.1.0"
+type: application
+home: https://github.com/tamcore/ical-filter-proxy
+sources:
+  - https://github.com/tamcore/ical-filter-proxy
+maintainers:
+  - name: tamcore
+    url: https://github.com/tamcore
+keywords:
+  - ical
+  - icalendar
+  - calendar
+  - proxy
+  - filter
+annotations:
+  org.opencontainers.image.source: https://github.com/tamcore/ical-filter-proxy
+  org.opencontainers.image.description: Filtering proxy for remote iCalendar feeds
+  org.opencontainers.image.licenses: MIT

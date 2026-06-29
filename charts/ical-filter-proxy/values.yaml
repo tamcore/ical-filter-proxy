@@ -1,0 +1,70 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/tamcore/ical-filter-proxy
+  pullPolicy: IfNotPresent
+  # Defaults to the chart appVersion when empty.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# The full config.yml for ical-filter-proxy, rendered into a ConfigMap and
+# mounted at /app/config.yml. See the project README for the schema.
+#
+# Secrets (api_key) can instead be injected via ${ICAL_FILTER_PROXY_*}
+# placeholders resolved from extraEnv at runtime.
+config: {}
+#  my_calendar:
+#    ical_url: https://example.com/calendar.ics
+#    api_key: ${ICAL_FILTER_PROXY_MY_KEY}
+#    rules:
+#      - field: summary
+#        operator: startswith
+#        val: Standup
+
+# Extra environment variables (e.g. for ${ICAL_FILTER_PROXY_*} substitution).
+extraEnv: []
+#  - name: ICAL_FILTER_PROXY_MY_KEY
+#    valueFrom:
+#      secretKeyRef:
+#        name: ical-filter-proxy-secrets
+#        key: my-key
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
+  #  - host: ical.example.com
+  #    paths:
+  #      - path: /
+  #        pathType: Prefix
+  tls: []
+
+resources: {}
+
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
