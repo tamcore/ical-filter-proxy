@@ -1,0 +1,61 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: ical-filter-proxy
+    main: ./cmd/ical-filter-proxy
+    binary: ical-filter-proxy
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/tamcore/ical-filter-proxy/internal/version.Version={{.Version}}
+      - -X github.com/tamcore/ical-filter-proxy/internal/version.Commit={{.Commit}}
+      - -X github.com/tamcore/ical-filter-proxy/internal/version.BuildDate={{.Date}}
+      - -X github.com/tamcore/ical-filter-proxy/internal/version.Branch={{.Branch}}
+
+archives:
+  - id: ical-filter-proxy-archive
+    formats:
+      - tar.gz
+    name_template: "ical-filter-proxy_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Tag }}-next"
+
+changelog:
+  use: github
+  sort: asc
+
+dockers_v2:
+  - ids:
+      - ical-filter-proxy
+    images:
+      - "ghcr.io/tamcore/ical-filter-proxy"
+    tags:
+      - "{{ .Tag }}"
+      - "{{ if not .Prerelease }}latest{{ end }}"
+    dockerfile: Dockerfile
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    labels:
+      org.opencontainers.image.created: "{{.Date}}"
+      org.opencontainers.image.title: "{{.ProjectName}}"
+      org.opencontainers.image.revision: "{{.FullCommit}}"
+      org.opencontainers.image.version: "{{.Version}}"
+      org.opencontainers.image.source: "https://github.com/tamcore/ical-filter-proxy"
+      org.opencontainers.image.description: "Filtering proxy for remote iCalendar feeds"
+      org.opencontainers.image.licenses: "MIT"
