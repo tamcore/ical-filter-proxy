@@ -39,13 +39,27 @@ func New(cfg config.Config, client *http.Client, logger *slog.Logger) (*Server, 
 		logger = slog.Default()
 	}
 	s := &Server{calendars: make(map[string]*entry, len(cfg)), client: client, logger: logger}
+	var totalRules, withAuth, withAlarms int
 	for name, c := range cfg {
 		tr, err := calendar.Compile(c)
 		if err != nil {
 			return nil, fmt.Errorf("calendar %q: %w", name, err)
 		}
 		s.calendars[name] = &entry{apiKey: c.APIKey, icalURL: c.ICalURL, transformer: tr}
+		totalRules += len(c.Rules)
+		if c.APIKey != "" {
+			withAuth++
+		}
+		if c.Alarms != nil {
+			withAlarms++
+		}
 	}
+	logger.Info("configuration loaded",
+		"calendars", len(cfg),
+		"rules", totalRules,
+		"with_auth", withAuth,
+		"with_alarms", withAlarms,
+	)
 	return s, nil
 }
 

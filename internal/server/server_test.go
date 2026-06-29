@@ -1,6 +1,8 @@
 package server
 
 import (
+	"bytes"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -130,5 +132,28 @@ func TestNewRejectsBadConfig(t *testing.T) {
 	}}
 	if _, err := New(cfg, nil, nil); err == nil {
 		t.Fatal("New should fail fast on an invalid rule")
+	}
+}
+
+func TestNewLogsConfigSummary(t *testing.T) {
+	var buf bytes.Buffer
+	logger := slog.New(slog.NewJSONHandler(&buf, nil))
+	cfg := config.Config{
+		"work": &config.Calendar{
+			ICalURL: "https://e.com/work.ics",
+			APIKey:  "k",
+			Rules:   []config.Rule{{Field: "summary", Operator: "equals", Val: config.Values{"x"}}},
+			Alarms:  &config.Alarms{Triggers: []string{"10 minutes"}},
+		},
+		"public": &config.Calendar{ICalURL: "https://e.com/pub.ics"},
+	}
+	if _, err := New(cfg, nil, logger); err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	line := buf.String()
+	for _, want := range []string{`"msg":"configuration loaded"`, `"calendars":2`, `"rules":1`, `"with_auth":1`, `"with_alarms":1`} {
+		if !strings.Contains(line, want) {
+			t.Fatalf("missing %s in startup log: %s", want, line)
+		}
 	}
 }
