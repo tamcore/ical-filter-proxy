@@ -1,0 +1,14 @@
+# Local agent/deploy secrets — never commit
+AGENTS.md.local
+
+# Build artifacts
+/dist/
+/ical-filter-proxy
+*.out
+coverage.*
+
+# Editor / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
