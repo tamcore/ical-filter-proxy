@@ -1,0 +1,35 @@
+# Example ical-filter-proxy configuration.
+# Copy to config.yml and edit. config.yml is gitignored (it may hold secrets).
+#
+# Each top-level key is a calendar name, reachable at:
+#   GET /<calendar_name>?key=<api_key>
+
+work:
+  ical_url: https://example.com/work.ics
+  # If set, requests must pass ?key=<api_key>. Omit to disable auth.
+  # Use ${ICAL_FILTER_PROXY_NAME} to pull the value from the environment.
+  api_key: ${ICAL_FILTER_PROXY_WORK_KEY}
+  timezone: Europe/Berlin
+  rules:
+    # All rules must match (AND). A list of values is OR-ed within a rule.
+    - field: summary
+      operator: startswith
+      val:
+        - Planning
+        - Daily Standup
+    - field: summary
+      operator: not-matches
+      val:
+        - /private/i
+    - field: blocking
+      operator: equals
+      val: true
+  alarms:
+    clear_existing: true
+    triggers:
+      - 1 day
+      - 10 minutes
+
+# A calendar with no rules and no key: a public, unfiltered passthrough.
+holidays:
+  ical_url: https://example.com/holidays.ics

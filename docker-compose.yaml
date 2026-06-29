@@ -1,0 +1,11 @@
+# Run the published image with a local config. For a source build use
+# `make snapshot` (goreleaser) — the production Dockerfile expects a
+# pre-built binary and has no compile stage.
+services:
+  ical-filter-proxy:
+    image: ghcr.io/tamcore/ical-filter-proxy:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config.yml:/app/config.yml:ro
+    restart: unless-stopped

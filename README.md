@@ -13,6 +13,7 @@ static binary in a distroless container.
 ## Quick start
 
 ```sh
+cp config.example.yml config.yml   # then edit
 go run ./cmd/ical-filter-proxy --config ./config.yml --addr :8000
 ```
 
@@ -22,7 +23,39 @@ Request a filtered calendar:
 curl 'http://localhost:8000/my_calendar_name?key=myapikey'
 ```
 
+### Docker
+
+```sh
+docker run -p 8000:8000 -v "$PWD/config.yml:/app/config.yml:ro" \
+  ghcr.io/tamcore/ical-filter-proxy:latest
+```
+
+Or with Compose (see `docker-compose.yaml`):
+
+```sh
+docker compose up
+```
+
+For a local source build, use `make snapshot` (goreleaser) — the production
+image ships a pre-built binary and has no compile stage.
+
+### Kubernetes
+
+A Helm chart lives in `charts/ical-filter-proxy` and is published as an OCI
+artifact on each release. Put your calendars under `config:` in a values file
+and install:
+
+```sh
+helm install ical-filter-proxy \
+  oci://ghcr.io/tamcore/charts/ical-filter-proxy \
+  -f my-values.yaml
+```
+
 ## Configuration
+
+The flags `--config` (default `/app/config.yml`) and `--addr` (default `:8000`)
+can also be set via `ICAL_FILTER_PROXY_CONFIG` and `ICAL_FILTER_PROXY_ADDR`.
+
 
 `config.yml` is a map of calendar name to calendar definition:
 

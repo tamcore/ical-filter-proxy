@@ -1,6 +1,9 @@
 # Local agent/deploy secrets — never commit
 AGENTS.md.local
 
+# Real config may hold api keys / private feed URLs — keep only the example
+/config.yml
+
 # Build artifacts
 /dist/
 /ical-filter-proxy
