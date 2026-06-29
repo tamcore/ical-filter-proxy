@@ -49,9 +49,9 @@ func New(cfg config.Config, client *http.Client, logger *slog.Logger) (*Server, 
 	return s, nil
 }
 
-// ServeHTTP routes requests: "/" returns a welcome string, "/<name>" returns the
-// authenticated, filtered calendar.
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+// route handles requests: "/" returns a welcome string, "/<name>" returns the
+// authenticated, filtered calendar. ServeHTTP wraps it with access logging.
+func (s *Server) route(w http.ResponseWriter, r *http.Request) {
 	name := strings.Trim(r.URL.Path, "/")
 	if name == "" {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")

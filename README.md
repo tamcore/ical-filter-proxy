@@ -114,6 +114,14 @@ the YAML is parsed.
 | unknown calendar                     | `404`                                      |
 | upstream feed unreachable/invalid    | `5xx`                                      |
 
+## Logging
+
+The server emits structured JSON logs to stdout via `log/slog`. Every request
+produces one access-log line with `method`, `path`, `status`, `bytes`,
+`duration_ms`, `client_ip` (honoring `X-Forwarded-For` / `X-Real-IP` from a
+reverse proxy) and `user_agent`. The query string is never logged, so the
+`key` parameter does not leak into logs.
+
 ## Migrating from the Ruby version
 
 The config schema and URL format are identical, so the existing `config.yml`
